@@ -1,0 +1,76 @@
+{
+  "common": {
+    "home": "Home",
+    "trips": "Trips",
+    "deals": "Deals",
+    "about": "About",
+    "contact": "Contact",
+    "language": "العربية",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "viewDetails": "View Details",
+    "whatsapp": "Inquire via WhatsApp",
+    "callNow": "Call Now"
+  },
+  "hero": {
+    "defaultTitle": "Discover the World With Us",
+    "defaultSubtitle": "Premium travel packages at the best prices",
+    "cta": "Browse Trips"
+  },
+  "sections": {
+    "deals": "Special Offers",
+    "endingSoon": "Ending Soon",
+    "allTrips": "All Trips",
+    "relatedTrips": "Related Trips"
+  },
+  "trip": {
+    "days": "Days",
+    "nights": "Nights",
+    "from": "Starting from",
+    "sar": "SAR",
+    "itinerary": "Itinerary",
+    "hotels": "Hotels",
+    "included": "Included",
+    "notIncluded": "Not Included",
+    "gallery": "Photo Gallery",
+    "noTrips": "No trips available yet",
+    "relatedTrips": "Related Trips"
+  },
+  "deal": {
+    "originalPrice": "Original Price",
+    "dealPrice": "Deal Price",
+    "endingSoon": "Ending Soon",
+    "expired": "Expired",
+    "noDeals": "No deals available right now",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Min",
+    "seconds": "Sec"
+  },
+  "page": {
+    "aboutUs": "About Us",
+    "contactUs": "Contact Us"
+  },
+  "inquiry": {
+    "title": "Send us a message",
+    "name": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "phone": "Phone Number",
+    "phonePlaceholder": "+966 5XX XXX XXXX",
+    "email": "Email (Optional)",
+    "emailPlaceholder": "your@email.com",
+    "message": "Message",
+    "messagePlaceholder": "How can we help you?",
+    "send": "Send Message",
+    "success": "Message Sent!",
+    "successMessage": "Thank you for reaching out. We'll get back to you shortly."
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "poweredBy": "Powered by SafarCMS",
+    "quickLinks": "Quick Links",
+    "contactUs": "Contact Us",
+    "followUs": "Follow Us"
+  }
+}

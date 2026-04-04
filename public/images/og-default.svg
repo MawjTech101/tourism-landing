@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#51487E"/>
+  <rect x="0" y="0" width="1200" height="630" fill="url(#grad)"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1200" y2="630">
+      <stop offset="0%" stop-color="#51487E"/>
+      <stop offset="100%" stop-color="#AB4E83"/>
+    </linearGradient>
+  </defs>
+  <!-- Compass star icon -->
+  <path d="M600 200L620 260H680L630 300L650 360L600 320L550 360L570 300L520 260H580L600 200Z" fill="white" opacity="0.9"/>
+  <circle cx="600" cy="300" r="12" fill="#AB4E83"/>
+  <!-- Text -->
+  <text x="600" y="430" text-anchor="middle" font-family="'IBM Plex Sans Arabic', sans-serif" font-weight="700" font-size="48" fill="white">اطلالات رحلتكم</text>
+  <text x="600" y="475" text-anchor="middle" font-family="'IBM Plex Sans Arabic', sans-serif" font-weight="400" font-size="24" fill="rgba(255,255,255,0.8)">Otolat Rahlatcom Travel &amp; Tourism</text>
+  <text x="600" y="520" text-anchor="middle" font-family="'IBM Plex Sans Arabic', sans-serif" font-weight="300" font-size="18" fill="rgba(255,255,255,0.6)">رحلات سياحية مميزة بأفضل الأسعار</text>
+</svg>

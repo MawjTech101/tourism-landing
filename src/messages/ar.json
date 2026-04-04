@@ -1,0 +1,76 @@
+{
+  "common": {
+    "home": "الرئيسية",
+    "trips": "الرحلات",
+    "deals": "العروض",
+    "about": "من نحن",
+    "contact": "تواصل معنا",
+    "language": "English",
+    "search": "بحث",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ",
+    "viewDetails": "عرض التفاصيل",
+    "whatsapp": "استفسر عبر واتساب",
+    "callNow": "اتصل الآن"
+  },
+  "hero": {
+    "defaultTitle": "اكتشف العالم معنا",
+    "defaultSubtitle": "رحلات سياحية مميزة بأفضل الأسعار",
+    "cta": "تصفح الرحلات"
+  },
+  "sections": {
+    "deals": "عروض خاصة",
+    "endingSoon": "عروض تنتهي قريباً",
+    "allTrips": "جميع الرحلات",
+    "relatedTrips": "رحلات مشابهة"
+  },
+  "trip": {
+    "days": "أيام",
+    "nights": "ليالي",
+    "from": "يبدأ من",
+    "sar": "ر.س",
+    "itinerary": "برنامج الرحلة",
+    "hotels": "الفنادق",
+    "included": "يشمل",
+    "notIncluded": "لا يشمل",
+    "gallery": "معرض الصور",
+    "noTrips": "لا توجد رحلات متاحة حالياً",
+    "relatedTrips": "رحلات مشابهة"
+  },
+  "deal": {
+    "originalPrice": "السعر الأصلي",
+    "dealPrice": "سعر العرض",
+    "endingSoon": "ينتهي قريباً",
+    "expired": "انتهى العرض",
+    "noDeals": "لا توجد عروض متاحة حالياً",
+    "days": "يوم",
+    "hours": "ساعة",
+    "minutes": "دقيقة",
+    "seconds": "ثانية"
+  },
+  "page": {
+    "aboutUs": "من نحن",
+    "contactUs": "تواصل معنا"
+  },
+  "inquiry": {
+    "title": "أرسل لنا رسالة",
+    "name": "الاسم الكامل",
+    "namePlaceholder": "أدخل اسمك الكامل",
+    "phone": "رقم الهاتف",
+    "phonePlaceholder": "+966 5XX XXX XXXX",
+    "email": "البريد الإلكتروني (اختياري)",
+    "emailPlaceholder": "your@email.com",
+    "message": "الرسالة",
+    "messagePlaceholder": "كيف يمكننا مساعدتك؟",
+    "send": "إرسال الرسالة",
+    "success": "تم إرسال الرسالة!",
+    "successMessage": "شكراً لتواصلك معنا. سنقوم بالرد عليك في أقرب وقت."
+  },
+  "footer": {
+    "rights": "جميع الحقوق محفوظة",
+    "poweredBy": "مدعوم من SafarCMS",
+    "quickLinks": "روابط سريعة",
+    "contactUs": "تواصل معنا",
+    "followUs": "تابعنا"
+  }
+}
