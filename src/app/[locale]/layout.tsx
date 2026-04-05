@@ -33,7 +33,7 @@ export default async function PublicLayout({
           <main className="min-h-screen">{children}</main>
           <PublicFooter />
           {config.whatsapp_number && (
-            <WhatsAppFAB phoneNumber={config.whatsapp_number} />
+            <WhatsAppFAB />
           )}
         </ThemeProvider>
       </NextIntlClientProvider>

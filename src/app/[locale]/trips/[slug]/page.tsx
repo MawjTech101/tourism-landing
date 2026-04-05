@@ -27,6 +27,7 @@ import {
   Wallet,
   Users,
 } from "lucide-react";
+import { WaLink } from "@/components/shared/wa-link";
 
 const activityIcons: Record<string, React.ElementType> = {
   sightseeing: Eye,
@@ -196,12 +197,9 @@ export default async function TripDetailPage({
   const description = isAr
     ? tripData.description_ar
     : tripData.description_en;
-  const whatsappNumber =
-    config.whatsapp_number?.replace(/[^0-9+]/g, "") || "";
   const whatsappMessage = isAr
     ? `مرحباً، أود الاستفسار عن رحلة: ${tripData.title_ar}`
     : `Hello, I'd like to inquire about trip: ${tripData.title_en}`;
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
     <div className="pb-28">
@@ -591,16 +589,14 @@ export default async function TripDetailPage({
                   </div>
 
                   <div className="p-5">
-                    {whatsappNumber && (
-                      <a
-                        href={whatsappUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                    {config.whatsapp_number && (
+                      <WaLink
+                        message={whatsappMessage}
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl cursor-pointer"
                       >
                         <MessageCircle className="h-5 w-5" fill="white" />
                         {t("common.whatsapp")}
-                      </a>
+                      </WaLink>
                     )}
                   </div>
                 </div>
@@ -661,7 +657,7 @@ export default async function TripDetailPage({
       </div>
 
       {/* Sticky bottom CTA (mobile only, desktop has sidebar) */}
-      {whatsappNumber && (
+      {config.whatsapp_number && (
         <div className="fixed inset-x-0 bottom-0 z-40 glass border-t border-border/30 lg:hidden">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
             <div className="hidden sm:block">
@@ -672,15 +668,13 @@ export default async function TripDetailPage({
                   : ""}
               </p>
             </div>
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl sm:w-auto"
+            <WaLink
+              message={whatsappMessage}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl sm:w-auto cursor-pointer"
             >
               <MessageCircle className="h-5 w-5" fill="white" />
               {t("common.whatsapp")}
-            </a>
+            </WaLink>
           </div>
         </div>
       )}

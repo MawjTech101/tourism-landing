@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { getTenantConfig } from "@/lib/tenant/config";
 import { Logo } from "@/components/shared/logo";
+import { WaLink } from "@/components/shared/wa-link";
 import { Instagram, Twitter, Music2, Ghost, ArrowRight } from "lucide-react";
 
 const socialIcons: Record<string, React.ElementType> = {
@@ -108,13 +109,11 @@ export async function PublicFooter() {
                   <span className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.15em] text-white/25">
                     WhatsApp
                   </span>
-                  <a
-                    href={`https://wa.me/${config.whatsapp_number.replace(/[^0-9+]/g, "")}`}
-                    className="text-sm text-white/50 transition-colors duration-300 hover:text-white/90"
-                    dir="ltr"
+                  <WaLink
+                    className="text-sm text-white/50 transition-colors duration-300 hover:text-white/90 cursor-pointer"
                   >
-                    {config.whatsapp_number}
-                  </a>
+                    <span dir="ltr">{config.whatsapp_number}</span>
+                  </WaLink>
                 </li>
               )}
               {config.email && (

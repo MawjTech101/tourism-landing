@@ -2,24 +2,35 @@
 
 import { MessageCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useCallback } from "react";
 
 interface WhatsAppFABProps {
-  phoneNumber: string;
   message?: string;
 }
 
 export function WhatsAppFAB({
-  phoneNumber,
-  message = "مرحباً، أود الاستفسار عن خدماتكم",
+  message = "\u0645\u0631\u062d\u0628\u0627\u064b\u060c \u0623\u0648\u062f \u0627\u0644\u0627\u0633\u062a\u0641\u0633\u0627\u0631 \u0639\u0646 \u062e\u062f\u0645\u0627\u062a\u0643\u0645",
 }: WhatsAppFABProps) {
-  const cleanNumber = phoneNumber.replace(/[^0-9+]/g, "");
-  const whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+  const handleClick = useCallback(async () => {
+    try {
+      const res = await fetch("/api/contact-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.open(data.url, "_blank", "noopener,noreferrer");
+      }
+    } catch {
+      // silently fail
+    }
+  }, [message]);
 
   return (
-    <motion.a
-      href={whatsappUrl}
-      target="_blank"
-      rel="noopener noreferrer"
+    <motion.button
+      type="button"
+      onClick={handleClick}
       className="fixed bottom-6 end-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#25D366] text-white shadow-lg shadow-[#25D366]/30 transition-shadow hover:shadow-xl hover:shadow-[#25D366]/40"
       aria-label="Contact via WhatsApp"
       initial={{ scale: 0, opacity: 0 }}
@@ -29,6 +40,6 @@ export function WhatsAppFAB({
       whileTap={{ scale: 0.95 }}
     >
       <MessageCircle className="h-7 w-7" fill="white" />
-    </motion.a>
+    </motion.button>
   );
 }

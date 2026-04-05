@@ -7,6 +7,7 @@ import {
   MessageCircle,
   Clock,
 } from "lucide-react";
+import { WaLink } from "@/components/shared/wa-link";
 import { MotionDiv } from "@/components/shared/motion";
 import { ContactForm } from "./contact-form";
 
@@ -18,13 +19,9 @@ export default async function ContactPage() {
   const config = await getTenantConfig();
 
   const address = isAr ? config.address_ar : config.address_en;
-  const whatsappNumber = config.whatsapp_number?.replace(/[^0-9+]/g, "") || "";
   const whatsappMessage = isAr
     ? "مرحباً، أود الاستفسار عن خدماتكم"
     : "Hello, I'd like to inquire about your services";
-  const whatsappUrl = whatsappNumber
-    ? `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`
-    : null;
 
   return (
     <div>
@@ -67,23 +64,23 @@ export default async function ContactPage() {
               <div className="space-y-4">
                 {/* WhatsApp */}
                 {config.whatsapp_number && (
-                  <div className="card-shine group flex items-start gap-4 rounded-2xl border border-border/40 bg-card p-6 transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#25D366]/[0.06]">
+                  <WaLink
+                    message={whatsappMessage}
+                    className="card-shine group flex w-full items-start gap-4 rounded-2xl border border-border/40 bg-card p-6 text-start transition-all duration-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-[#25D366]/[0.06] cursor-pointer"
+                  >
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#25D366]/8 transition-colors group-hover:bg-[#25D366]/15">
                       <MessageCircle className="h-5 w-5 text-[#25D366]" />
                     </div>
                     <div>
                       <h3 className="text-sm font-bold">WhatsApp</h3>
-                      <a
-                        href={whatsappUrl || "#"}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <span
                         className="text-sm text-muted-foreground transition-colors hover:text-brand-primary"
                         dir="ltr"
                       >
                         {config.whatsapp_number}
-                      </a>
+                      </span>
                     </div>
-                  </div>
+                  </WaLink>
                 )}
 
                 {/* Phone Numbers */}
@@ -157,16 +154,14 @@ export default async function ContactPage() {
                 </div>
 
                 {/* WhatsApp CTA */}
-                {whatsappUrl && (
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-4.5 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/15 transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-[#25D366]/25"
+                {config.whatsapp_number && (
+                  <WaLink
+                    message={whatsappMessage}
+                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-4.5 text-sm font-semibold text-white shadow-lg shadow-[#25D366]/15 transition-all duration-500 hover:scale-[1.02] hover:shadow-xl hover:shadow-[#25D366]/25 cursor-pointer"
                   >
                     <MessageCircle className="h-5 w-5" fill="white" />
                     {t("common.whatsapp")}
-                  </a>
+                  </WaLink>
                 )}
               </div>
             </MotionDiv>

@@ -23,6 +23,7 @@ import {
   Award,
   Compass,
 } from "lucide-react";
+import { WaLink } from "@/components/shared/wa-link";
 
 export default async function HomePage() {
   const config = await getTenantConfig();
@@ -441,14 +442,12 @@ export default async function HomePage() {
 
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                   {config.whatsapp_number && (
-                    <a
-                      href={`https://wa.me/${config.whatsapp_number.replace(/[^0-9+]/g, "")}?text=${encodeURIComponent(config.whatsapp_template || "مرحباً")}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-3 rounded-2xl bg-white px-9 py-4.5 text-base font-semibold text-[#25D366] shadow-2xl shadow-black/10 transition-all duration-500 hover:scale-[1.03] hover:shadow-xl"
+                    <WaLink
+                      message={config.whatsapp_template || "\u0645\u0631\u062d\u0628\u0627\u064b"}
+                      className="inline-flex items-center gap-3 rounded-2xl bg-white px-9 py-4.5 text-base font-semibold text-[#25D366] shadow-2xl shadow-black/10 transition-all duration-500 hover:scale-[1.03] hover:shadow-xl cursor-pointer"
                     >
                       {t("common.whatsapp")}
-                    </a>
+                    </WaLink>
                   )}
                   <Link
                     href="/contact"
