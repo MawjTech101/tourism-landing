@@ -26,7 +26,7 @@ export async function submitInquiry(
     headerStore.get("x-real-ip") ||
     "unknown";
 
-  const rl = rateLimit(`inquiry:${ip}`, {
+  const rl = await rateLimit(`inquiry:${ip}`, {
     limit: 5,
     windowMs: 15 * 60 * 1000,
   });

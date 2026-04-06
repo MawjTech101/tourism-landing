@@ -1,11 +1,16 @@
 /**
- * In-memory rate limiter suitable for serverless/edge environments.
+ * Rate limiter with dual storage: in-memory (fast path) + Supabase (persistent).
  *
- * Uses a global Map so the store survives across hot-reloaded handler
- * invocations in the same process (e.g. Next.js API routes on Vercel).
- * Expired entries are cleaned up automatically on every call to avoid
- * unbounded memory growth.
+ * The in-memory store handles the common case within a single serverless
+ * invocation lifetime. For durability across cold starts, we fall back to
+ * a Supabase `rate_limits` table when available.
+ *
+ * If the database table doesn't exist or the query fails, the limiter
+ * degrades gracefully to in-memory only — it never blocks legitimate
+ * requests due to infra issues.
  */
+
+import { createAdminClient } from "@/lib/supabase/admin";
 
 interface RateLimitEntry {
   count: number;
@@ -29,7 +34,7 @@ interface RateLimitResult {
   reset: number;
 }
 
-// Persist across hot reloads in development (Next.js caches globals).
+// ── In-memory store (fast path) ──────────────────────────────────────
 const globalStore =
   (globalThis as Record<string, unknown>).__rateLimitStore as
     | Map<string, RateLimitEntry>
@@ -42,10 +47,6 @@ if (!globalStore) {
   (globalThis as Record<string, unknown>).__rateLimitStore = store;
 }
 
-/**
- * Remove all entries whose window has already expired.
- * Called on every `rateLimit` invocation so the Map never grows unbounded.
- */
 function cleanupExpired(): void {
   const now = Date.now();
   for (const [key, entry] of store) {
@@ -55,47 +56,116 @@ function cleanupExpired(): void {
   }
 }
 
-/**
- * Check (and consume) a rate-limit token for the given key.
- *
- * @example
- * ```ts
- * const result = rateLimit(`login:${ip}`, { limit: 5, windowMs: 60_000 });
- * if (!result.success) {
- *   return NextResponse.json({ error: "Too many requests" }, { status: 429 });
- * }
- * ```
- */
-export function rateLimit(
+function inMemoryCheck(
   key: string,
-  options: RateLimitOptions,
+  { limit, windowMs }: RateLimitOptions,
 ): RateLimitResult {
-  const { limit, windowMs } = options;
   const now = Date.now();
-
-  // Housekeeping — prune stale entries every call (cheap for moderate traffic).
   cleanupExpired();
 
   const existing = store.get(key);
 
-  // Window still active — increment.
   if (existing && existing.reset > now) {
     existing.count += 1;
-    const remaining = Math.max(limit - existing.count, 0);
     return {
       success: existing.count <= limit,
-      remaining,
+      remaining: Math.max(limit - existing.count, 0),
       reset: existing.reset,
     };
   }
 
-  // No active window — start a fresh one.
   const reset = now + windowMs;
   store.set(key, { count: 1, reset });
+  return { success: true, remaining: limit - 1, reset };
+}
 
-  return {
-    success: true,
-    remaining: limit - 1,
-    reset,
-  };
+// ── Supabase-backed persistent check ─────────────────────────────────
+async function persistentCheck(
+  key: string,
+  { limit, windowMs }: RateLimitOptions,
+): Promise<RateLimitResult | null> {
+  try {
+    const supabase = createAdminClient();
+
+    // Clean up expired entries for this key
+    const now = new Date().toISOString();
+    await supabase
+      .from("rate_limits")
+      .delete()
+      .eq("key", key)
+      .lt("reset_at", now);
+
+    // Try to get existing entry
+    const { data: existing } = await supabase
+      .from("rate_limits")
+      .select("count, reset_at")
+      .eq("key", key)
+      .gt("reset_at", now)
+      .single();
+
+    if (existing) {
+      const newCount = existing.count + 1;
+      await supabase
+        .from("rate_limits")
+        .update({ count: newCount })
+        .eq("key", key);
+
+      const resetMs = new Date(existing.reset_at).getTime();
+      return {
+        success: newCount <= limit,
+        remaining: Math.max(limit - newCount, 0),
+        reset: resetMs,
+      };
+    }
+
+    // No active window — create one
+    const resetAt = new Date(Date.now() + windowMs).toISOString();
+    await supabase
+      .from("rate_limits")
+      .insert({ key, count: 1, reset_at: resetAt });
+
+    return {
+      success: true,
+      remaining: limit - 1,
+      reset: new Date(resetAt).getTime(),
+    };
+  } catch {
+    // Table might not exist yet or DB unreachable — degrade to in-memory
+    return null;
+  }
+}
+
+/**
+ * Check (and consume) a rate-limit token for the given key.
+ *
+ * Uses persistent storage when available, falls back to in-memory.
+ */
+export async function rateLimit(
+  key: string,
+  options: RateLimitOptions,
+): Promise<RateLimitResult> {
+  // Try persistent first
+  const persistent = await persistentCheck(key, options);
+  if (persistent) {
+    // Sync in-memory store for fast subsequent checks
+    store.set(key, {
+      count: persistent.remaining === 0 ? options.limit + 1 : options.limit - persistent.remaining,
+      reset: persistent.reset,
+    });
+    return persistent;
+  }
+
+  // Fallback to in-memory
+  return inMemoryCheck(key, options);
+}
+
+/**
+ * Synchronous in-memory-only rate limit for contexts where async is not ideal.
+ * Use `rateLimit()` (async) for the persistent version.
+ */
+export function rateLimitSync(
+  key: string,
+  options: RateLimitOptions,
+): RateLimitResult {
+  return inMemoryCheck(key, options);
 }

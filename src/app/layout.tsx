@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { GoogleAnalytics } from "@/components/shared/google-analytics";
 import "./globals.css";
 
 const ibmPlexArabic = IBM_Plex_Sans_Arabic({
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html suppressHydrationWarning>
       <body className={`${ibmPlexArabic.variable} font-sans antialiased`}>
+        <GoogleAnalytics />
         {children}
         <Toaster />
       </body>

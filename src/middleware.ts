@@ -6,6 +6,36 @@ import { resolveTenantSlug } from "@/lib/tenant/resolve";
 
 const handleI18nRouting = createIntlMiddleware(routing);
 
+/** Apply security headers to every response */
+function applySecurityHeaders(response: NextResponse): void {
+  // Content Security Policy
+  const csp = [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "img-src 'self' data: blob: https://*.supabase.co https://www.google-analytics.com https://www.googletagmanager.com",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.googletagmanager.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; ");
+
+  response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=()"
+  );
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=63072000; includeSubDomains; preload"
+  );
+}
+
 // Determine if we should scope cookies to the base domain (cross-subdomain SSO)
 function getCookieDomain(hostname: string): string | undefined {
   const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN;
@@ -35,6 +65,7 @@ export async function middleware(request: NextRequest) {
         request: { headers: requestHeaders },
       });
       response.headers.set("x-tenant-slug", tenantSlug);
+      applySecurityHeaders(response);
       return response;
     }
 
@@ -74,20 +105,43 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
+    // Block non-super-admins from /admin/tenants at the edge
+    if (pathname.startsWith("/admin/tenants")) {
+      const { data: platformUsers } = await supabase
+        .from("platform_users")
+        .select("role, is_active")
+        .eq("auth_id", user.id);
+
+      const isSuperAdmin = (platformUsers || []).some(
+        (pu: { role: string; is_active: boolean }) =>
+          pu.role === "super_admin" && pu.is_active
+      );
+
+      if (!isSuperAdmin) {
+        return NextResponse.redirect(
+          new URL("/admin/dashboard", request.url)
+        );
+      }
+    }
+
     response.headers.set("x-tenant-slug", tenantSlug);
+    applySecurityHeaders(response);
     return response;
   }
 
   // --- STEP 3: API routes — pass through with tenant header ---
   if (pathname.startsWith("/api")) {
-    return NextResponse.next({
+    const response = NextResponse.next({
       request: { headers: requestHeaders },
     });
+    applySecurityHeaders(response);
+    return response;
   }
 
   // --- STEP 4: Public routes — i18n routing ---
   const response = handleI18nRouting(request);
   response.headers.set("x-tenant-slug", tenantSlug);
+  applySecurityHeaders(response);
   return response;
 }
 
